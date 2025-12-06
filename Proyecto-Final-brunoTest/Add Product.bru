@@ -1,0 +1,31 @@
+meta {
+  name: Add Product
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:4000/products
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzQ0NjEyNmQyYWVmNjFmOGIyNWNmZiIsImVtYWlsIjoicHJ1ZWJhMkB0ZXN0LmNvbSIsImlhdCI6MTc2NTA1OTEyMywiZXhwIjoxNzY1MDYyNzIzfQ.27PEuaIekI3OrI8MydivI_T8TmtORzl4RH9jqPilKwc
+}
+
+body:json {
+  {
+    "name": "guitrra fender",
+    "description": "Mejor guitarra del momento, lista para pruebas.",
+    "price": 750.75,
+    "category": "Music",
+    "stock": 2,
+    "image": "Fender.jpg"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

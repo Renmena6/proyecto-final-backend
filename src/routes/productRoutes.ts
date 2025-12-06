@@ -12,7 +12,7 @@ const productRouter = Router()
 // TODAS LAS PETICIONES QUE LLEGAN AL PRODUCTROUTER EMPIEZAN CON
 // POST http://localhost:3000/products/
 
-productRouter.get("/", ProductController.getAllProducts)
+productRouter.get("/", authMiddleware, ProductController.getAllProducts) // cambio aqui*
 productRouter.get("/:id", ProductController.getProduct)
 productRouter.post("/", authMiddleware, upload.single("image"), ProductController.addProduct)
 productRouter.patch("/:id", authMiddleware, ProductController.updateProduct)
