@@ -103,3 +103,7 @@
 ::1 GET /products? 304 - - 168.286 ms
 ::1 GET /products? 304 - - 335.475 ms
 ::1 GET /products? 304 - - 162.596 ms
+::1 GET /products? 304 - - 213.153 ms
+::1 GET /products? 304 - - 173.003 ms
+::1 GET / 304 - - 0.597 ms
+::1 GET /.well-known/appspecific/com.chrome.devtools.json 404 54 - 1.561 ms
