@@ -1,11 +1,14 @@
+// src/routes/authRouter.ts
+
 import { Router } from "express"
 import AuthController from "../controllers/authController"
+import limiter from "../middleware/rateLimitMiddleware" // <-- 1. IMPORTAR EL LIMITER
 
 const authRouter = Router()
 
-// http://localhost:3000/auth/register
-authRouter.post("/register", AuthController.register)
-// http://localhost:3000/auth/login
-authRouter.post("/login", AuthController.login)
+//  APLICAR EL LIMITER COMO MIDDLEWARE
+authRouter.post("/register", limiter, AuthController.register) 
+// APLICAR EL LIMITER COMO MIDDLEWARE
+authRouter.post("/login", limiter, AuthController.login) 
 
 export default authRouter
