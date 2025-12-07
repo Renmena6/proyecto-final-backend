@@ -5,13 +5,19 @@ meta {
 }
 
 get {
-  url: http://localhost:4000/products
+  url: http://localhost:4000/products?category=Gaming&minPrice=400&name=PS5
   body: none
   auth: inherit
 }
 
+params:query {
+  category: Gaming
+  minPrice: 400
+  name: PS5
+}
+
 headers {
-  Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzQ0NjEyNmQyYWVmNjFmOGIyNWNmZiIsImVtYWlsIjoicHJ1ZWJhMkB0ZXN0LmNvbSIsImlhdCI6MTc2NTA1OTEyMywiZXhwIjoxNzY1MDYyNzIzfQ.27PEuaIekI3OrI8MydivI_T8TmtORzl4RH9jqPilKwc
+  Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzU2MzIwNGI0Mzg0ZjFkOWY5ZmZkYSIsImVtYWlsIjoicmVuem9tZW5hNkBnbWFpbC5jb20iLCJpYXQiOjE3NjUxMDY1NjcsImV4cCI6MTc2NTExMDE2N30.MvfyfD1MCOHLexcv1ZDWxTyn6D8MQ28gvvPJdxNnvPU
 }
 
 settings {

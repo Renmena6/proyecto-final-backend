@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import User from "../model/UserModel"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
+import { registerSchema } from "../validators/authValidator" //
 dotenv.config()
 
 const SECRET_KEY = process.env.JWT_SECRET!
@@ -13,33 +14,41 @@ class AuthController {
   // body: {"email": "gabi@gmail.com", "password": pepe123}
   static register = async (req: Request, res: Response): Promise<void | Response> => {
     try {
-      const { email, password } = req.body
+        // 1. VALIDACIÓN CON ZOD: Usa el esquema para validar el cuerpo de la solicitud
+        const validator = registerSchema.safeParse(req.body);
 
-      if (!email || !password) {
-        return res.status(400).json({ success: false, error: "Datos invalidos" })
-      }
+        if (!validator.success) {
+            // Si falla (ej: email mal formado, password corta), devuelve 400 con el error detallado
+            return res.status(400).json({ success: false, error: validator.error.flatten().fieldErrors });
+        }
 
-      const user = await User.findOne({ email })
+        // 2 EXTRAER DATOS VALIDADOS
+        const { email, password } = validator.data;
 
-      if (user) {
-        return res.status(409).json({ success: false, error: "El usuario ya existe en la base de datos." })
-      }
+        // 3 VERIFICACIÓN DE USUARIO EXISTENTE (Lógica original)
+        const user = await User.findOne({ email });
 
-      // crear el hash de la contraseña
-      const hash = await bcrypt.hash(password, 10)
-      const newUser = new User({ email, password: hash })
+        if (user) {
+            return res.status(409).json({ success: false, error: "El usuario ya existe en la base de datos." });
+        }
 
-      await newUser.save()
-      res.status(201).json({ success: true, data: newUser })
+        // 4. CREAR HASH Y GUARDAR
+        const hash = await bcrypt.hash(password, 10);
+        const newUser = new User({ email, password: hash });
+
+        await newUser.save();
+        res.status(201).json({ success: true, data: newUser });
+
     } catch (e) {
-      const error = e as Error
-      switch (error.name) {
-        case "MongoServerError":
-          return res.status(409).json({ success: false, error: "Usuario ya existente en nuestra base de datos" })
-      }
+        const error = e as Error;
+        switch (error.name) {
+            case "MongoServerError":
+                return res.status(409).json({ success: false, error: "Usuario ya existente en nuestra base de datos" });
+        }
+        // Aseguramos que cualquier otro error 500 se maneje correctamente
+        return res.status(500).json({ success: false, error: error.message });
     }
-  }
-
+}
   static login = async (req: Request, res: Response): Promise<void | Response> => {
     try {
       const { email, password } = req.body
