@@ -25,14 +25,10 @@ declare global {
 const PORT = process.env.PORT
 const app = express()
 
-//  CONFIGURACIÓN DE CORS CORREGIDA
-const allowedOrigins = [
-  'http://localhost:5173', // Permitir el Frontend Local
-  'https://proyecto-final-store-app.onrender.com' //  FRONTEND DE PRODUCCIÓN AÑADIDO PARA CORS!
-];
-
+// 🚀 CONFIGURACIÓN DE CORS FINAL: Vuelve a permitir CUALQUIER origen (*)
+// Esto soluciona el bloqueo de productos y el error CORS.
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: '*', // ⚠️ Permitimos cualquier dominio para que Render funcione correctamente
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true,
 };
