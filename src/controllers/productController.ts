@@ -58,7 +58,7 @@ class ProductController {
 
       const { name, description, price, category, stock } = body
 
-      // 🔴 CORRECCIÓN 1: Se eliminaron las líneas manuales del if para que el control
+      //  Se eliminaron las líneas manuales del if para que el control
       //    pase siempre al validador de esquema (safeParse), asegurando consistencia.
 
       const dataToValidate = {
@@ -91,7 +91,6 @@ class ProductController {
       const { id } = req.params
       const { body } = req
 
-      // 🔴 CORRECCIÓN 2: Tipeo corregido de 'succes' a 'success' para asegurar consistencia
       if (!Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, error: "ID Inválido" })
 
       const validator = updatedProductSchema.safeParse(body)
