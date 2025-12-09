@@ -25,16 +25,16 @@ declare global {
 const PORT = process.env.PORT
 const app = express()
 
-//  CONFIGURACIÓN DE CORS MODIFICADA (Permite la conexión desde localhost5173) 
+//  CONFIGURACIÓN DE CORS CORREGIDA
 const allowedOrigins = [
-  'http://localhost:5173', // ¡PERMITIR EL FRONTEND LOCAL!
-  'https://proyecto-final-backend-3gw2.onrender.com'
+  'http://localhost:5173', // Permitir el Frontend Local
+  'https://proyecto-final-store-app.onrender.com' //  FRONTEND DE PRODUCCIÓN AÑADIDO PARA CORS!
 ];
 
 const corsOptions = {
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-  credentials: true,
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
