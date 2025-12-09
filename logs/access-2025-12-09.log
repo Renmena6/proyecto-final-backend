@@ -1,0 +1,16 @@
+::ffff:127.0.0.1 POST /auth/login 401 41 - 490.852 ms
+::ffff:127.0.0.1 POST /auth/register 409 69 - 169.026 ms
+::ffff:127.0.0.1 POST /auth/register 201 164 - 485.777 ms
+::ffff:127.0.0.1 POST /auth/login 401 41 - 274.110 ms
+::ffff:127.0.0.1 POST /auth/login 200 240 - 276.100 ms
+::ffff:127.0.0.1 GET /products 200 1597 - 169.960 ms
+::ffff:127.0.0.1 PATCH /products/6934ae49c145800cc17869db 401 38 - 3.729 ms
+::ffff:127.0.0.1 PATCH /products/6934ae49c145800cc17869db 404 50 - 183.882 ms
+::ffff:127.0.0.1 PATCH /products/6934ae49c145800cc17869db 404 50 - 192.312 ms
+::ffff:127.0.0.1 PATCH /products/6934ae49c145800cc17869db 404 50 - 165.852 ms
+::ffff:127.0.0.1 PATCH /products/6934ae49c145800cc17869db 404 50 - 177.815 ms
+::ffff:127.0.0.1 POST /products 401 38 - 2.169 ms
+::ffff:127.0.0.1 POST /products 201 222 - 197.101 ms
+::ffff:127.0.0.1 POST /products 201 222 - 181.198 ms
+::ffff:127.0.0.1 POST /products 400 45 - 1.848 ms
+::ffff:127.0.0.1 POST /products 400 207 - 13.415 ms
