@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import { verify } from "jsonwebtoken"
 import IUserTokenPayload from "../interfaces/IUserTokenPayload"
-import { getJwtSecret } from '../config/jwtConfigs'; // 🚀 Importar la función
+import { getJwtSecret } from '../config/jwtConfigs'; // 
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   // ⚠️ ELIMINAMOS: const SECRET_KEY = process.env.JWT_SECRET!
@@ -15,7 +15,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const token = header.split(" ")[1]
   
   // Obtener la clave secreta de forma segura
-  const SECRET_KEY = getJwtSecret(); // 🔑 CORRECCIÓN: Usamos la función
+  const SECRET_KEY = getJwtSecret(); // 
 
   try {
     const payload = verify(token, SECRET_KEY);
