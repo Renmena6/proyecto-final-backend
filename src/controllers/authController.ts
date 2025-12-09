@@ -1,12 +1,16 @@
+// En el archivo auth.controller.ts
+
 import { Request, Response } from "express"
 import bcrypt from "bcryptjs"
 import User from "../model/UserModel"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-import { registerSchema } from "../validators/authValidator" //
+import { registerSchema } from "../validators/authValidator" 
+import { getJwtSecret } from '../config/jwtConfigs'; // 🚀 IMPORTACIÓN CLAVE: Ajusta la ruta si es necesario
+
 dotenv.config()
 
-//  LÍNEA ELIMINADA: Ya no se define SECRET_KEY globalmente aquí
+// ⚠️ Se eliminó la variable SECRET_KEY definida aquí
 
 class AuthController {
   // http://localhost:3000/auth/register
@@ -70,8 +74,10 @@ class AuthController {
         return res.status(401).json({ success: false, error: "No autorizado" })
       }
 
-      //  CAMBIO CLAVE:  process.env.JWT_SECRET directamente aquí.
-      const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET!, { expiresIn: "1h" })
+      // 🚀 CAMBIO CLAVE: Llama a la función getJwtSecret()
+      const secretKey = getJwtSecret();
+      
+      const token = jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: "1h" })
       res.json({ success: true, token })
     } catch (e) {
       const error = e as Error
