@@ -10,7 +10,7 @@ import { getJwtSecret } from '../config/jwtConfigs'; // 🚀 IMPORTACIÓN CLAVE:
 
 dotenv.config()
 
-// ⚠️ Se eliminó la variable SECRET_KEY definida aquí
+//  Se eliminó la variable SECRET_KEY definida aquí
 
 class AuthController {
   // http://localhost:3000/auth/register
@@ -74,7 +74,7 @@ class AuthController {
         return res.status(401).json({ success: false, error: "No autorizado" })
       }
 
-      // 🚀 CAMBIO CLAVE: Llama a la función getJwtSecret()
+      //  Llama a la función getJwtSecret()
       const secretKey = getJwtSecret();
       
       const token = jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: "1h" })

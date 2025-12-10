@@ -1,5 +1,5 @@
+
 // FUNCIONES QUE SANITIZAN DATOS DE ENTRADA Y RESPONDEN AL CLIENTE
-// LA REQUEST Y EL RESPONSE SIEMPRE ESTARÁN SOLO EN LOS CONTROLLERS
 
 import { Request, Response } from "express"
 import Product from "../model/ProductModel"
@@ -10,17 +10,22 @@ class ProductController {
   static getAllProducts = async (req: Request, res: Response): Promise<void | Response> => {
     try {
       const { name, stock, category, minPrice, maxPrice } = req.query
-      console.log(req.query)
-
-      const filter: any = {}
+      
+      const filter: Record<string, any> = {}
 
       if (name) filter.name = new RegExp(String(name), "i")
-      if (stock) filter.stock = Number(stock)
       if (category) filter.category = new RegExp(String(category), "i")
+      
+      if (stock) filter.stock = Number(stock)
+      
       if (minPrice || maxPrice) {
+        const numericMinPrice = minPrice ? Number(minPrice) : undefined;
+        const numericMaxPrice = maxPrice ? Number(maxPrice) : undefined;
+
         filter.price = {}
-        if (minPrice) filter.price.$gte = minPrice
-        if (maxPrice) filter.price.$lte = maxPrice
+        
+        if (numericMinPrice !== undefined) filter.price.$gte = numericMinPrice
+        if (numericMaxPrice !== undefined) filter.price.$lte = numericMaxPrice
       }
 
       const products = await Product.find(filter)
@@ -55,11 +60,11 @@ class ProductController {
   static addProduct = async (req: Request, res: Response): Promise<void | Response> => {
     try {
       const { body, file } = req
+      
+      //  Obtención del ID del usuario logueado (necesario para el owner)
+      const userId = (req as any).user.id; 
 
       const { name, description, price, category, stock } = body
-
-      //  Se eliminaron las líneas manuales del if para que el control
-      //    pase siempre al validador de esquema (safeParse), asegurando consistencia.
 
       const dataToValidate = {
         name,
@@ -76,7 +81,10 @@ class ProductController {
         return res.status(400).json({ success: false, error: validator.error.flatten().fieldErrors });
       }
 
-      const newProduct = new Product(validator.data)
+      const newProduct = new Product({
+          ...validator.data,
+          owner: userId //  ASIGNAMOS EL DUEÑO
+      })
 
       await newProduct.save()
       res.status(201).json({ success: true, data: newProduct })
@@ -90,20 +98,37 @@ class ProductController {
     try {
       const { id } = req.params
       const { body } = req
+      const userId = (req as any).user.id; // ID del usuario logueado
 
       if (!Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, error: "ID Inválido" })
 
-      const validator = updatedProductSchema.safeParse(body)
+      // 1 ENCUENTRA EL PRODUCTO
+      const product = await Product.findById(id);
+
+      if (!product) {
+        return res.status(404).json({ success: false, error: "Producto no encontrado" })
+      }
+      
+      //  VERIFICACIÓN DE PROPIEDAD: Si el owner NO es el usuario logueado 
+      if (product.owner.toString() !== userId) {
+          // 
+          return res.status(403).json({ success: false, error: "No tienes permiso para editar este producto" }); 
+      }
+      
+      // 3. CONTINUAR CON LA ACTUALIZACIÓN...
+      const dataToValidate = {
+        ...body,
+        ...(body.price && { price: +body.price }),
+        ...(body.stock && { stock: +body.stock }),
+      };
+
+      const validator = updatedProductSchema.safeParse(dataToValidate)
 
       if (!validator.success) {
         return res.status(400).json({ success: false, error: validator.error.flatten().fieldErrors });
       }
 
       const updatedProduct = await Product.findByIdAndUpdate(id, validator.data, { new: true })
-
-      if (!updatedProduct) {
-        return res.status(404).json({ success: false, error: "Producto no encontrado" })
-      }
 
       res.json({ success: true, data: updatedProduct })
     } catch (e) {
@@ -115,21 +140,31 @@ class ProductController {
   static deleteProduct = async (req: Request, res: Response): Promise<void | Response> => {
     try {
       const id = req.params.id
+      const userId = (req as any).user.id; // ID del usuario logueado
 
       if (!Types.ObjectId.isValid(id)) {
         return res.status(400).json({ success: false, error: "ID Inválido" });
       }
 
-      const deletedProduct = await Product.findByIdAndDelete(id)
-
-      if (!deletedProduct) {
+      // 1. ENCUENTRA EL PRODUCTO
+      const product = await Product.findById(id);
+      
+      if (!product) {
         return res.status(404).json({ success: false, error: "Producto no encontrado" })
       }
+      
+      // 🚀 VERIFICACIÓN DE PROPIEDA Si el owner NO es el usuario logueado 
+      if (product.owner.toString() !== userId) {
+          return res.status(403).json({ success: false, error: "No tienes permiso para eliminar este producto" }); // 403 Forbidden
+      }
+      
+      // 3. SI PASA LA VERIFICACIÓN, PROCEDER A BORRAR
+      const deletedProduct = await Product.findByIdAndDelete(id) 
 
       res.json({ success: true, data: deletedProduct })
     } catch (e) {
       const error = e as Error
-      res.status(500).json({ success: false, error: error.message }) // Aseguramos consistencia en el catch final
+      res.status(500).json({ success: false, error: error.message }) 
     }
   }
 }
